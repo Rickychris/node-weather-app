@@ -1,13 +1,18 @@
-const request = require("postman-request");
+const getForcast = require("./utils/getForcast");
+const chalk = require("chalk");
 
-const url ="https://api.weatherstack.com/current?access_key=22d238e413abaf76dad54f7ac8d4d1f4&query=New%20York"
+const address = process.argv[2];
 
-request({url:url, json:true}, (error, response) => {
-    if(error){
-        console.log("unable to connect");
-    }else if(response.body.error){
-        console.log("unable to find location");
-    }else{
-        console.log(response.body.current);
-    }
-})
+if(!address){
+    console.log(chalk.red.inverse("Please provide an address"));
+} else {
+
+    getForcast(address, (error, { description, temperature, feelslike, location}) => {
+        if(error){
+            console.log(chalk.red.inverse(error));
+        }else{
+            console.log(chalk.green.inverse(`${description}. It is currently ${temperature} degrees out. It feels like ${feelslike} degrees in ${location}.`));
+        }
+    })
+
+}
